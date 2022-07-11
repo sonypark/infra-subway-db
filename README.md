@@ -19,28 +19,35 @@
 ## 🚀 Getting Started
 
 ### Install
+
 #### npm 설치
+
 ```
 cd frontend
 npm install
 ```
+
 > `frontend` 디렉토리에서 수행해야 합니다.
 
 ### Usage
+
 #### webpack server 구동
+
 ```
 npm run dev
 ```
+
 #### application 구동
+
 ```
 ./gradlew clean build
 ```
+
 <br>
 
 ## 미션
 
 * 미션 진행 후에 아래 질문의 답을 작성하여 PR을 보내주세요.
-
 
 ### 1단계 - 쿼리 최적화
 
@@ -51,21 +58,21 @@ npm run dev
 ```sql
 USE tuning;
 
-SELECT top_5_manager.id as "사원번호", e.last_name as "이름", top_5_manager.annual_income as "연봉", p.position_name as "직급명", r.time as "입출입시간",r.region as "지역", r.record_symbol as "입출입구분" 
-FROM
-(SELECT id, start_date, annual_income 
-FROM salary s
-WHERE id IN 
-(SELECT m.employee_id
-FROM department d
-JOIN manager m ON d.id = m.department_id and UPPER(d.note) = "ACTIVE"
-WHERE m.start_date < now() and m.end_date > now()
-) and s.end_date > now()
-ORDER BY annual_income desc
-LIMIT 5) top_5_manager
-JOIN employee e on e.id = top_5_manager.id
-JOIN position p ON p.id = top_5_manager.id and p.end_date > now()
-JOIN record r ON r.employee_id = top_5_manager.id and r.record_symbol = "O";
+SELECT top_5_manager.id as "사원번호", e.last_name as "이름", top_5_manager.annual_income as "연봉", p.position_name as "직급명", r.time as "입출입시간", r.region as "지역", r.record_symbol as "입출입구분"
+FROM (SELECT id, start_date, annual_income
+      FROM salary s
+      WHERE id IN
+            (SELECT m.employee_id
+             FROM department d
+                      JOIN manager m ON d.id = m.department_id and UPPER(d.note) = "ACTIVE"
+             WHERE m.start_date < now()
+               and m.end_date > now()
+            )
+        and s.end_date > now()
+      ORDER BY annual_income desc LIMIT 5) top_5_manager
+         JOIN employee e on e.id = top_5_manager.id
+         JOIN position p ON p.id = top_5_manager.id and p.end_date > now()
+         JOIN record r ON r.employee_id = top_5_manager.id and r.record_symbol = "O";
 ```
 
 ```sql
