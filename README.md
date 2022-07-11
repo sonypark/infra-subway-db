@@ -48,6 +48,33 @@ npm run dev
 
 - 활동중인(Active) 부서의 현재 부서관리자 중 연봉 상위 5위안에 드는 사람들이 최근에 각 지역별로 언제 퇴실했는지 조회해보세요. (사원번호, 이름, 연봉, 직급명, 지역, 입출입구분, 입출입시간)
 
+```sql
+USE tuning;
+
+SELECT top_5_manager.id as "사원번호", e.last_name as "이름", top_5_manager.annual_income as "연봉", p.position_name as "직급명", r.time as "입출입시간",r.region as "지역", r.record_symbol as "입출입구분" 
+FROM
+(SELECT id, start_date, annual_income 
+FROM salary s
+WHERE id IN 
+(SELECT m.employee_id
+FROM department d
+JOIN manager m ON d.id = m.department_id and UPPER(d.note) = "ACTIVE"
+WHERE m.start_date < now() and m.end_date > now()
+) and s.end_date > now()
+ORDER BY annual_income desc
+LIMIT 5) top_5_manager
+JOIN employee e on e.id = top_5_manager.id
+JOIN position p ON p.id = top_5_manager.id and p.end_date > now()
+JOIN record r ON r.employee_id = top_5_manager.id and r.record_symbol = "O";
+```
+
+```sql
+14 row(s) returned	0.172 sec / 0.000011 sec
+```
+
+<img width="538" alt="result" src="https://user-images.githubusercontent.com/34808501/178293317-6b3696c9-e217-49c7-9d08-54030d6d3dd6.png">
+
+![explain](https://user-images.githubusercontent.com/34808501/178293084-ba908499-f14e-408a-b88a-5f1aa8d88b43.png)
 ---
 
 ### 2단계 - 인덱스 설계
