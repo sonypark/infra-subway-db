@@ -167,7 +167,7 @@ alter table member add primary key (id);
 alter table hospital add primary key (id);
 create index idx_covid_hospital_id on covid (hospital_id);
 create index idx_hospital_name on hospital (name);
-create index idx_member_age on hospital (age);
+create index idx_member_age on member (age);
 ```
 <img width="1017" alt="p4_explain" src="https://user-images.githubusercontent.com/34808501/178471899-fdf30148-d055-4aa1-afa4-186cba2b5cb8.png">
 <img width="684" alt="p4_explain_img" src="https://user-images.githubusercontent.com/34808501/178471900-09c12765-8d60-48cc-8000-7aae8cd0874d.png">
